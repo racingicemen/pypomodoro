@@ -37,10 +37,6 @@ class PomodoroTimer(QWidget):
         self.current_time_limit = self.pomodoro_limit
         self.current_lcd = self.pomodoro_lcd
 
-        self.task_is_set = False
-        self.number_of_tasks = 0
-        self.task_complete_counter = 0
-
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.updateTimer)
 
@@ -65,30 +61,9 @@ class PomodoroTimer(QWidget):
         self.shortBreakTab()
         self.longBreakTab()
 
-        self.enter_task_lineedit = QLineEdit()
-        self.enter_task_lineedit.setClearButtonEnabled(True)
-        self.enter_task_lineedit.setPlaceholderText("Enter Your Current Task")
-
-        confirm_task_button = QPushButton(QIcon("images/plus.png"), None)
-        confirm_task_button.setObjectName("ConfirmButton")
-        confirm_task_button.clicked.connect(self.addTaskToTaskbar)
-
-        task_entry_h_box = QHBoxLayout()
-        task_entry_h_box.addWidget(self.enter_task_lineedit)
-        task_entry_h_box.addWidget(confirm_task_button)
-
-        self.tasks_v_box = QVBoxLayout()
-
-        task_v_box = QVBoxLayout()
-        task_v_box.addLayout(task_entry_h_box)
-        task_v_box.addLayout(self.tasks_v_box)
-
-        task_bar_gb = QGroupBox("Tasks")
-        task_bar_gb.setLayout(task_v_box)
 
         main_v_box = QVBoxLayout()
         main_v_box.addWidget(self.tab_bar)
-        main_v_box.addWidget(task_bar_gb)
         self.setLayout(main_v_box)
 
     def pomodoroTab(self):
@@ -175,9 +150,6 @@ class PomodoroTimer(QWidget):
     def startCountDown(self):
         self.current_start_button.setEnabled(False)
 
-        if self.task_is_set and self.task_complete_counter == 0:
-            self.counter_label.setText("{}/6".format(self.task_complete_counter))
-
         remaining_time = self.calculateDisplayTime(self.current_time_limit)
 
         if remaining_time == "00:00":
@@ -213,14 +185,6 @@ class PomodoroTimer(QWidget):
         if remaining_time == "00:00":
             self.stopCountDown()
             self.current_lcd.display(remaining_time)
-
-            if self.current_tab_selected == 0 and self.task_is_set:
-                self.task_complete_counter += 1
-                if self.task_complete_counter == 6:
-                    self.counter_label.setText("Time for a long break. {}/6".format(self.task_complete_counter))
-                    self.task_complete_counter = 0
-                elif self.task_complete_counter < 6:
-                    self.counter_label.setText("{}/6".format(self.task_complete_counter))
 
         else:
             self.current_time_limit -= 1000
@@ -260,41 +224,6 @@ class PomodoroTimer(QWidget):
             reset_time = self.calculateDisplayTime(self.current_time_limit)
             self.current_lcd = self.long_break_lcd
             self.current_lcd.display(reset_time)
-
-    def addTaskToTaskbar(self):
-        text = self.enter_task_lineedit.text()
-        self.enter_task_lineedit.clear()
-
-        if text != "" and self.number_of_tasks != 1:
-            self.enter_task_lineedit.setReadOnly(True)
-            self.task_is_set = True
-            self.new_task = QLabel(text)
-
-            self.counter_label = QLabel("{}/6".format(self.task_complete_counter))
-            self.counter_label.setAlignment(Qt.AlignRight)
-
-            self.cancel_task_button = QPushButton(QIcon("images/minus.png"), None)
-            self.cancel_task_button.setMaximumWidth(24)
-            self.cancel_task_button.clicked.connect(self.clearCurrentTask)
-
-            self.new_task_h_box = QHBoxLayout()
-            self.new_task_h_box.addWidget(self.new_task)
-            self.new_task_h_box.addWidget(self.counter_label)
-            self.new_task_h_box.addWidget(self.cancel_task_button)
-
-            self.tasks_v_box.addLayout(self.new_task_h_box)
-            self.number_of_tasks += 1
-
-    def clearCurrentTask(self):
-        self.new_task.setParent(None)
-        self.counter_label.setParent(None)
-        self.cancel_task_button.setParent(None)
-
-        self.number_of_tasks -= 1
-        self.task_is_set = False
-        self.task_complete_counter = 0
-
-        self.enter_task_lineedit.setReadOnly(False)
 
     def convertTotalTime(self, time_in_milli):
         minutes = (time_in_milli / (1000 * 60)) % 60
