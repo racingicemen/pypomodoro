@@ -1,23 +1,30 @@
-import sys
-from PyQt5.QtWidgets import (
-    QApplication, QWidget, QLCDNumber, QPushButton, QLabel, QLineEdit,
-    QGroupBox, QTabWidget, QVBoxLayout, QHBoxLayout
-)
+import sys, datetime
+from PyQt5 import QtCore
+from PyQt5.QtWidgets import QApplication, QWidget, QLCDNumber, QPushButton,QTabWidget, QVBoxLayout, QHBoxLayout
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QIcon
+from PyQt5 import QtMultimedia
 from PomodoroStyleSheet import style_sheet
 
 MINUTES = 60 * 1000             # milliseconds in a minute
-POMODORO_TIME = 30 * MINUTES    # pomdoro duration in minutes
-SHORT_BREAK_TIME = 6 * MINUTES  # short break time
-LONG_BREAK_TIME = 60 * MINUTES  # long break time
+POMODORO_TIME = 3 * MINUTES    # pomdoro duration in minutes
+SHORT_BREAK_TIME = 1 * MINUTES  # short break time
+LONG_BREAK_TIME = 2 * MINUTES  # long break time
 
 
 class PomodoroTimer(QWidget):
     def __init__(self):
         super().__init__()
+        self.pomodoro_sound = self.initialize_sound_files('clock-ticking-5.wav')
+        self.sbreak_sound = self.initialize_sound_files('clock-ticking-1.wav')
+        self.lbreak_sound = self.initialize_sound_files('clock-ticking-2.wav')
         self.initializeUI()
 
+    def initialize_sound_files(self, sound_file_name):
+        sound = QtMultimedia.QSoundEffect()
+        sound.setSource(QtCore.QUrl.fromLocalFile(sound_file_name))
+        sound.setVolume(1.0)
+        return sound
 
     def initializeUI(self):
         self.setMinimumSize(500, 400)
@@ -162,6 +169,7 @@ class PomodoroTimer(QWidget):
         if self.timer.isActive():
             self.timer.stop()
             self.current_start_button.setEnabled(True)
+            self.stop_ticking_sound()
 
     def resetCountDown(self):
         self.stopCountDown()
@@ -189,10 +197,28 @@ class PomodoroTimer(QWidget):
         else:
             self.current_time_limit -= 1000
             self.current_lcd.display(remaining_time)
+            self.play_ticking_sound()
 
+    def play_ticking_sound(self):
+        if self.current_tab_selected == 0:
+            self.pomodoro_sound.stop()
+            self.pomodoro_sound.play()
+        elif self.current_tab_selected == 1:
+            self.sbreak_sound.stop()
+            self.sbreak_sound.play()
+        elif self.current_tab_selected == 2:
+            self.lbreak_sound.stop()
+            self.lbreak_sound.play()
+
+    def stop_ticking_sound(self):
+        self.pomodoro_sound.stop()
+        self.sbreak_sound.stop()
+        self.lbreak_sound.stop()
+    
     def tabSwitched(self, index):
         self.current_tab_selected = index
         self.stopCountDown()
+        self.stop_ticking_sound()
 
         if self.current_tab_selected == 0:
             self.current_start_button = self.pomodoro_start_button
