@@ -259,15 +259,13 @@ class PomodoroTimer(QWidget):
 
     @staticmethod
     def convert_total_time(time_in_milli):
-        hours = (time_in_milli // (1000 * 60)) // 60
-        minutes = (time_in_milli // (1000 * 60)) % 60
+        minutes = time_in_milli // (1000 * 60)
         seconds = (time_in_milli // 1000) % 60
-        return hours, minutes, seconds
+        return minutes, seconds
 
     @staticmethod
     def calculate_display_time(time):
-        hours, minutes, seconds = PomodoroTimer.convert_total_time(time)
-        minutes += hours*60
+        minutes, seconds = PomodoroTimer.convert_total_time(time)
         amount_of_time = "{:02d}:{:02d}".format(minutes, seconds)
         return amount_of_time
 
