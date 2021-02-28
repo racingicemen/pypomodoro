@@ -39,3 +39,7 @@
 
 1. Only ```Pomodoro```s can be **paused**.
 
+# State Diagram
+
+
+![](out/statediagram/statediagram.png)

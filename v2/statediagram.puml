@@ -1,0 +1,20 @@
+@startuml
+
+state Pomodoro
+state ShortBreak
+state Paused
+state LongBreak
+state Blinking
+state Done
+
+[*] --> Pomodoro : Start
+Pomodoro --> Paused : Pause
+Paused --> Pomodoro : Resume
+Pomodoro --> Blinking : TimerExpired
+Blinking --> Done : Stop
+Done --> ShortBreak : PomodoroCount % 6 != 0
+Done --> LongBreak : PomodoroCount % 6 == 0
+ShortBreak --> Pomodoro : Stop, TimerExpired
+LongBreak --> Pomodoro : Stop, TimerExpired
+Pomodoro --> Done : Stop
+@enduml
