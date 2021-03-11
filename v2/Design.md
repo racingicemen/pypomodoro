@@ -42,4 +42,4 @@
 # State Diagram
 
 
-![](out/statediagram/statediagram.png)
+![](out/statediagram/statediagram.svg)
