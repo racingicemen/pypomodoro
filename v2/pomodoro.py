@@ -24,7 +24,7 @@ class Pomodoro(QWidget):
         self.stop_button.setStyleSheet("""QPushButton { background: black; color: white }""")
 
         self.pomodoro_count_lcd = QLCDNumber()
-        self.pomodoro_count_lcd.setDigitCount(1)
+        self.pomodoro_count_lcd.setDigitCount(2)
         self.pomodoro_count_lcd.setSegmentStyle(QLCDNumber.Flat)
         self.pomodoro_count_lcd.setStyleSheet("""QLCDNumber { background-color: black; color: orange; }""")
 
@@ -54,27 +54,27 @@ class Pomodoro(QWidget):
         self.setup_ui()
 
     def setup_ui(self):
-        self.setFixedSize(510, 340)
+        self.setFixedSize(540, 360)
         self.setWindowTitle("LeastAction Pomodoro")
 
         main_layout = QGridLayout()
-        main_layout.addWidget(self.timer_lcd, 0, 0, 3, 6)
+        main_layout.addWidget(self.timer_lcd, 0, 0, 3, 9)
         self.timer_lcd.display("00:00")
 
         button_layout = QGridLayout()
-        button_layout.addWidget(self.start_button, 0, 0, 1, 2)
-        button_layout.addWidget(self.pause_resume_button, 0, 2, 1, 2)
-        button_layout.addWidget(self.stop_button, 0, 4, 1, 2)
-        main_layout.addLayout(button_layout, 3, 0, 1, 6)
+        button_layout.addWidget(self.start_button, 0, 0, 1, 3)
+        button_layout.addWidget(self.pause_resume_button, 0, 3, 1, 3)
+        button_layout.addWidget(self.stop_button, 0, 6, 1, 3)
+        main_layout.addLayout(button_layout, 3, 0, 1, 9)
 
         counter_layout = QGridLayout()
-        counter_layout.addWidget(self.pomodoro_count_lcd, 0, 0, 1, 1)
-        self.pomodoro_count_lcd.display("0")
-        counter_layout.addWidget(self.task_minutes_lcd, 0, 1, 1, 2)
+        counter_layout.addWidget(self.pomodoro_count_lcd, 0, 0, 1, 2)
+        self.pomodoro_count_lcd.display("00")
+        counter_layout.addWidget(self.task_minutes_lcd, 0, 3, 1, 2)
         self.task_minutes_lcd.display("00")
-        counter_layout.addWidget(self.total_minutes_lcd, 0, 3, 1, 3)
+        counter_layout.addWidget(self.total_minutes_lcd, 0, 6, 1, 3)
         self.total_minutes_lcd.display("000")
-        main_layout.addLayout(counter_layout, 4, 0, 2, 6)
+        main_layout.addLayout(counter_layout, 4, 0, 2, 9)
 
         number = randint(0, 100)
         if number < 33:
