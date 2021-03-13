@@ -97,10 +97,20 @@ class PomodoroTimer(QWidget):
         self.all_tasks_time = 0
         self.pomodoro_count = 0
 
+        self.ticking_sound = PomodoroTimer.initialize_sound_files('ticking-sound.wav')
+        self.beeping_sound = PomodoroTimer.initialize_sound_files('beeping-sound.wav')
+
         self.setup_ui()
 
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.timer_fired)
+
+    @staticmethod
+    def initialize_sound_files(sound_file_name):
+        sound = QSoundEffect()
+        sound.setSource(QtCore.QUrl.fromLocalFile(sound_file_name))
+        sound.setVolume(1.0)
+        return sound
 
     def setup_ui(self):
         self.setFixedSize(600, 400)
@@ -135,6 +145,7 @@ class PomodoroTimer(QWidget):
         self.pause_resume_button.setText(self.calculate_pause_resume_btn_text())
         if self.state.paused:
             self.timer.stop()
+            self.ticking_sound.stop()
         else:
             self.timer.start()
 
@@ -189,10 +200,22 @@ class PomodoroTimer(QWidget):
 
         self.timer_lcd.setPalette(self.state.lcd_color)
         self.reset_countdown()
+        self.ticking_sound.stop()
+        self.beeping_sound.stop()
 
     def timer_fired(self):
-        if self.state.current_time >= self.state.time_limit and self.state.started:
+        if self.state.current_time >= self.state.time_limit:
             self.state.show_blink = not self.state.show_blink
+            if self.state is self.pomodoro_state:   # exceeding time limit in PomodoroState results in ticking sound
+                self.ticking_sound.stop()           # continuing to be played. Blinking LCD display is the only
+                self.ticking_sound.play()           # indication that time is up.
+            else:
+                self.ticking_sound.stop()           # exceeding time limit in Short/LongBreakState results in the
+                self.beeping_sound.stop()           # beeping sound being played, along with the blinking LCD display
+                self.beeping_sound.play()           # we also shut off the ticking sound
+        else:
+            self.ticking_sound.stop()
+            self.ticking_sound.play()
 
         current_time = self.calculate_display_time()
         self.state.current_time += TICK_INTERVAL
