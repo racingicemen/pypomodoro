@@ -115,6 +115,7 @@ class PomodoroTimer(QWidget):
     def setup_ui(self):
         self.setFixedSize(600, 400)
         self.setWindowTitle("LeastAction Pomodoro")
+        self.setWindowIcon(QIcon("tomato.png"))
 
         main_layout = QGridLayout()
         main_layout.addWidget(self.timer_lcd, 0, 0, 3, 9)
