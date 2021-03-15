@@ -1,6 +1,6 @@
 import sys
 from PySide2 import QtCore
-from PySide2.QtWidgets import QApplication, QWidget, QLCDNumber, QPushButton, QGridLayout
+from PySide2.QtWidgets import QApplication, QWidget, QLCDNumber, QPushButton, QGridLayout, QLabel
 from PySide2.QtCore import QTimer
 from PySide2.QtGui import QIcon, QColor, QPalette, QFont
 from PySide2.QtMultimedia import QSoundEffect
@@ -11,6 +11,7 @@ SHORT_BREAK_TIME = 6*MINUTES
 LONG_BREAK_TIME = 60*MINUTES
 TICK_INTERVAL = 500  # milliseconds
 LONG_BREAK_AFTER = 6  # pomodoros
+INTERRUPTION_MARKER = "\u2b24"  # Black Large Circle
 
 
 class State:
@@ -84,6 +85,10 @@ class PomodoroTimer(QWidget):
         self.total_minutes_lcd.setSegmentStyle(QLCDNumber.Flat)
         self.total_minutes_lcd.setStyleSheet("""QLCDNumber { background-color: black; color: orange; }""")
 
+        self.interruptions_label = QLabel()
+        self.interruptions_label.setFont(QFont("PT Mono", 18))
+        self.interruptions_label.setStyleSheet("border: 3px solid black;")
+
         self.last_task_time = 0
         self.all_tasks_time = 0
         self.pomodoros_till_long_break = LONG_BREAK_AFTER
@@ -128,6 +133,8 @@ class PomodoroTimer(QWidget):
         self.total_minutes_lcd.display(self.calculate_all_tasks_time())
         main_layout.addLayout(counter_layout, 4, 0, 2, 9)
 
+        main_layout.addWidget(self.interruptions_label, 6, 0, 1, 9)
+
         self.timer_lcd.setPalette(self.state.lcd_color)
         self.setLayout(main_layout)
 
@@ -139,6 +146,8 @@ class PomodoroTimer(QWidget):
         if self.state.paused:
             self.timer.stop()
             self.ticking_sound.stop()
+            old_text = self.interruptions_label.text()
+            self.interruptions_label.setText(old_text + INTERRUPTION_MARKER + " ")
         else:
             self.timer.start()
 
@@ -172,6 +181,7 @@ class PomodoroTimer(QWidget):
         if self.state is self.pomodoro_state:
             self.pause_resume_button.setEnabled(True)
             self.last_task_time = 0
+            self.interruptions_label.setText("")
         self.start_countdown()
 
     def handle_stop(self):
