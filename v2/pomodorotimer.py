@@ -90,6 +90,7 @@ class PomodoroTimer(QWidget):
 
         self.ticking_sound = PomodoroTimer.initialize_sound_files('ticking-sound.wav')
         self.beeping_sound = PomodoroTimer.initialize_sound_files('beeping-sound.wav')
+        self.time_exceeded_sound = PomodoroTimer.initialize_sound_files("time-exceeded-sound.wav")
 
         self.setup_ui()
 
@@ -207,17 +208,18 @@ class PomodoroTimer(QWidget):
         self.reset_countdown()
         self.ticking_sound.stop()
         self.beeping_sound.stop()
+        self.time_exceeded_sound.stop()
 
     def timer_fired(self):
         if self.state.current_time >= self.state.time_limit:
             self.state.show_blink = not self.state.show_blink
-            if self.state is self.pomodoro_state:   # exceeding time limit in PomodoroState results in ticking sound
-                self.ticking_sound.stop()           # continuing to be played. Blinking LCD display is the only
-                self.ticking_sound.play()           # indication that time is up.
+            self.ticking_sound.stop()
+            if self.state is self.pomodoro_state:
+                self.time_exceeded_sound.stop()
+                self.time_exceeded_sound.play()
             else:
-                self.ticking_sound.stop()           # exceeding time limit in Short/LongBreakState results in the
-                self.beeping_sound.stop()           # beeping sound being played, along with the blinking LCD display
-                self.beeping_sound.play()           # we also shut off the ticking sound
+                self.beeping_sound.stop()
+                self.beeping_sound.play()
         else:
             self.ticking_sound.stop()
             self.ticking_sound.play()
