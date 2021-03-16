@@ -62,6 +62,10 @@ class PomodoroTimer(QWidget):
         self.start_button.setFont(QFont("Jetbrains Mono Nerd Font Mono", 18))
         self.start_button.clicked.connect(self.handle_start)
 
+        self.skip_button = QPushButton("Skip")
+        self.skip_button.setFont(QFont("Jetbrains Mono Nerd Font Mono", 18))
+        self.skip_button.clicked.connect(self.handle_skip)
+
         self.pause_resume_button = QPushButton(self.calculate_pause_resume_btn_text(), enabled=False)
         self.pause_resume_button.setFont(QFont("Jetbrains Mono Nerd Font Mono", 18))
         self.pause_resume_button.clicked.connect(self.handle_pause_resume)
@@ -115,25 +119,26 @@ class PomodoroTimer(QWidget):
         self.setWindowIcon(QIcon("tomato.png"))
 
         main_layout = QGridLayout()
-        main_layout.addWidget(self.timer_lcd, 0, 0, 3, 9)
+        main_layout.addWidget(self.timer_lcd, 0, 0, 3, 12)
         self.timer_lcd.display(self.calculate_display_time())
 
         button_layout = QGridLayout()
         button_layout.addWidget(self.start_button, 0, 0, 1, 3)
-        button_layout.addWidget(self.pause_resume_button, 0, 3, 1, 3)
-        button_layout.addWidget(self.stop_button, 0, 6, 1, 3)
-        main_layout.addLayout(button_layout, 3, 0, 1, 9)
+        button_layout.addWidget(self.skip_button, 0, 3, 1, 3)
+        button_layout.addWidget(self.pause_resume_button, 0, 6, 1, 3)
+        button_layout.addWidget(self.stop_button, 0, 9, 1, 3)
+        main_layout.addLayout(button_layout, 3, 0, 1, 12)
 
         counter_layout = QGridLayout()
-        counter_layout.addWidget(self.pomodoros_till_long_break_lcd, 0, 0, 1, 1)
+        counter_layout.addWidget(self.pomodoros_till_long_break_lcd, 0, 0, 1, 2)
         self.pomodoros_till_long_break_lcd.display(self.calculate_pomodoros_till_long_break())
-        counter_layout.addWidget(self.task_minutes_lcd, 0, 1, 1, 2)
+        counter_layout.addWidget(self.task_minutes_lcd, 0, 2, 1, 4)
         self.task_minutes_lcd.display(self.calculate_last_task_time())
-        counter_layout.addWidget(self.total_minutes_lcd, 0, 3, 1, 3)
+        counter_layout.addWidget(self.total_minutes_lcd, 0, 6, 1, 6)
         self.total_minutes_lcd.display(self.calculate_all_tasks_time())
-        main_layout.addLayout(counter_layout, 4, 0, 2, 9)
+        main_layout.addLayout(counter_layout, 4, 0, 2, 12)
 
-        main_layout.addWidget(self.interruptions_label, 6, 0, 1, 9)
+        main_layout.addWidget(self.interruptions_label, 6, 0, 1, 12)
 
         self.timer_lcd.setPalette(self.state.lcd_color)
         self.setLayout(main_layout)
@@ -178,6 +183,7 @@ class PomodoroTimer(QWidget):
         self.state.started = True
         self.start_button.setEnabled(False)
         self.stop_button.setEnabled(True)
+        self.skip_button.setEnabled(False)
         if self.state is self.pomodoro_state:
             self.pause_resume_button.setEnabled(True)
             self.last_task_time = 0
@@ -189,6 +195,7 @@ class PomodoroTimer(QWidget):
         self.pause_resume_button.setEnabled(False)
         self.start_button.setEnabled(True)
         self.stop_button.setEnabled(False)
+        self.skip_button.setEnabled(True)
         self.state.paused = False
         self.pause_resume_button.setText(self.calculate_pause_resume_btn_text())
 
@@ -219,6 +226,10 @@ class PomodoroTimer(QWidget):
         self.ticking_sound.stop()
         self.beeping_sound.stop()
         self.time_exceeded_sound.stop()
+
+    def handle_skip(self):
+        self.handle_start()
+        self.handle_stop()
 
     def timer_fired(self):
         if self.state.current_time >= self.state.time_limit:
