@@ -2,46 +2,13 @@ import sys
 from PySide2 import QtCore
 from PySide2.QtWidgets import QApplication, QWidget, QLCDNumber, QPushButton, QGridLayout, QLabel
 from PySide2.QtCore import QTimer
-from PySide2.QtGui import QIcon, QColor, QPalette, QFont
+from PySide2.QtGui import QIcon, QFont
 from PySide2.QtMultimedia import QSoundEffect
+from states import PomodoroState, ShortBreakState, LongBreakState
 
-MINUTES = 60*1000
-POMODORO_TIME = 30*MINUTES
-SHORT_BREAK_TIME = 6*MINUTES
-LONG_BREAK_TIME = 60*MINUTES
 TICK_INTERVAL = 500  # milliseconds
 LONG_BREAK_AFTER = 6  # pomodoros
 INTERRUPTION_MARKER = "\u2b24"  # Black Large Circle
-
-
-class State:
-    def __init__(self):
-        self.started = False
-        self.paused = False
-        self.current_time = 0
-        self.show_blink = True
-        self.lcd_color = QPalette()
-
-
-class PomodoroState(State):
-    def __init__(self):
-        super().__init__()
-        self.time_limit = POMODORO_TIME
-        self.lcd_color.setColor(QPalette.Foreground, QColor("red"))
-
-
-class ShortBreakState(State):
-    def __init__(self):
-        super().__init__()
-        self.time_limit = SHORT_BREAK_TIME
-        self.lcd_color.setColor(QPalette.Foreground, QColor("yellow"))
-
-
-class LongBreakState(State):
-    def __init__(self):
-        super().__init__()
-        self.time_limit = LONG_BREAK_TIME
-        self.lcd_color.setColor(QPalette.Foreground, QColor("green"))
 
 
 class PomodoroTimer(QWidget):
@@ -53,41 +20,15 @@ class PomodoroTimer(QWidget):
         self.long_break_state = LongBreakState()
         self.state = self.pomodoro_state
 
-        self.timer_lcd = QLCDNumber()
-        self.timer_lcd.setDigitCount(5)
-        self.timer_lcd.setSegmentStyle(QLCDNumber.Flat)
-        self.timer_lcd.setStyleSheet("""QLCDNumber { background-color: black; }""")
+        self.timer_lcd = PomodoroTimer.create_lcd(digit_count=5, lcd_color="red")
+        self.pomodoros_till_long_break_lcd = PomodoroTimer.create_lcd(digit_count=1, lcd_color="orange")
+        self.task_minutes_lcd = PomodoroTimer.create_lcd(digit_count=2, lcd_color="orange")
+        self.total_minutes_lcd = PomodoroTimer.create_lcd(digit_count=3, lcd_color="orange")
 
-        self.start_button = QPushButton("Start")
-        self.start_button.setFont(QFont("Jetbrains Mono Nerd Font Mono", 18))
-        self.start_button.clicked.connect(self.handle_start)
-
-        self.skip_button = QPushButton("Skip")
-        self.skip_button.setFont(QFont("Jetbrains Mono Nerd Font Mono", 18))
-        self.skip_button.clicked.connect(self.handle_skip)
-
-        self.pause_resume_button = QPushButton(self.calculate_pause_resume_btn_text(), enabled=False)
-        self.pause_resume_button.setFont(QFont("Jetbrains Mono Nerd Font Mono", 18))
-        self.pause_resume_button.clicked.connect(self.handle_pause_resume)
-
-        self.stop_button = QPushButton("Stop", enabled=False)
-        self.stop_button.setFont(QFont("Jetbrains Mono Nerd Font Mono", 18))
-        self.stop_button.clicked.connect(self.handle_stop)
-
-        self.pomodoros_till_long_break_lcd = QLCDNumber()
-        self.pomodoros_till_long_break_lcd.setDigitCount(1)
-        self.pomodoros_till_long_break_lcd.setSegmentStyle(QLCDNumber.Flat)
-        self.pomodoros_till_long_break_lcd.setStyleSheet("""QLCDNumber { background-color: black; color: orange; }""")
-
-        self.task_minutes_lcd = QLCDNumber()
-        self.task_minutes_lcd.setDigitCount(2)
-        self.task_minutes_lcd.setSegmentStyle(QLCDNumber.Flat)
-        self.task_minutes_lcd.setStyleSheet("""QLCDNumber { background-color: black; color: orange; }""")
-
-        self.total_minutes_lcd = QLCDNumber()
-        self.total_minutes_lcd.setDigitCount(3)
-        self.total_minutes_lcd.setSegmentStyle(QLCDNumber.Flat)
-        self.total_minutes_lcd.setStyleSheet("""QLCDNumber { background-color: black; color: orange; }""")
+        self.start_button = PomodoroTimer.create_button("Start", self.handle_start)
+        self.skip_button = PomodoroTimer.create_button("Skip", self.handle_skip)
+        self.pause_resume_button = PomodoroTimer.create_button("Pause", self.handle_pause_resume, enabled=False)
+        self.stop_button = PomodoroTimer.create_button("Stop", self.handle_stop, enabled=False)
 
         self.interruptions_label = QLabel()
         self.interruptions_label.setFont(QFont("PT Mono", 18))
@@ -112,6 +53,21 @@ class PomodoroTimer(QWidget):
         sound.setSource(QtCore.QUrl.fromLocalFile(sound_file_name))
         sound.setVolume(1.0)
         return sound
+
+    @staticmethod
+    def create_lcd(digit_count, lcd_color):
+        lcd = QLCDNumber()
+        lcd.setDigitCount(digit_count)
+        lcd.setSegmentStyle(QLCDNumber.Flat)
+        lcd.setStyleSheet(f"""QLCDNumber {{ background-color: black; color: {lcd_color}; }}""")
+        return lcd
+
+    @staticmethod
+    def create_button(label, callback, enabled=True):
+        button = QPushButton(label, enabled=enabled)
+        button.setFont(QFont("Jetbrains Mono Nerd Font Mono", 18))
+        button.clicked.connect(callback)
+        return button
 
     def setup_ui(self):
         self.setFixedSize(600, 400)
@@ -245,13 +201,12 @@ class PomodoroTimer(QWidget):
             self.ticking_sound.stop()
             self.ticking_sound.play()
 
-        current_time = self.calculate_display_time()
         self.state.current_time += TICK_INTERVAL
 
         if self.state is self.pomodoro_state:
             self.last_task_time += TICK_INTERVAL
 
-        self.timer_lcd.display(current_time)
+        self.timer_lcd.display(self.calculate_display_time())
         self.task_minutes_lcd.display(self.calculate_last_task_time())
 
     def start_countdown(self):
