@@ -160,18 +160,11 @@ class PomodoroTimer(QWidget):
             self.total_minutes_lcd.display(self.calculate_all_tasks_time())
             self.last_non_pomodoro_time = 0
 
-
     def calculate_pause_resume_btn_text(self):
-        if self.state.paused:
-            return "Resume"
-        else:
-            return "Pause"
+        return "Resume" if self.state.paused else "Pause"
 
     def calculate_start_stop_btn_text(self):
-        if self.non_pomodoro_started:
-            return "Stop"
-        else:
-            return "Start"
+        return "Stop" if self.non_pomodoro_started else "Start"
 
     def calculate_display_time(self):
         if not self.state.show_blink:
