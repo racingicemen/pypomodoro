@@ -13,8 +13,11 @@ INTERRUPTION_MARKER = "\u2b24"  # Black Large Circle
 
 
 class PomodoroTimer(QWidget):
-    def __init__(self):
+    def __init__(self, width, height):
         super().__init__()
+
+        self.width = width
+        self.height = height
 
         self.pomodoro_state = PomodoroState()
         self.short_break_state = ShortBreakState()
@@ -78,7 +81,7 @@ class PomodoroTimer(QWidget):
         return button
 
     def setup_ui(self):
-        self.setFixedSize(600, 400)
+        self.setFixedSize(self.width, self.height)
         self.setWindowTitle("LeastAction Pomodoro")
         self.setWindowIcon(QIcon("tomato.png"))
 
@@ -279,5 +282,10 @@ class PomodoroTimer(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    window = PomodoroTimer()
+    width = 600
+    height = 400
+    if len(sys.argv) == 3:
+        width = int(sys.argv[1])
+        height = int(sys.argv[2])
+    window = PomodoroTimer(width=width, height=height)
     sys.exit(app.exec_())
