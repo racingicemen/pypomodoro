@@ -133,6 +133,7 @@ class PomodoroTimer(QWidget):
             self.non_pomodoro_start_stop_button.setEnabled(True)
         else:
             self.timer.start()
+            self.non_pomodoro_start_stop_button.setEnabled(False)
 
     def handle_non_pomodoro_start_stop(self):
         self.non_pomodoro_started = not self.non_pomodoro_started
