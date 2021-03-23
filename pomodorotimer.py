@@ -82,7 +82,7 @@ class PomodoroTimer(QWidget):
 
     def setup_ui(self):
         self.setFixedSize(self.width, self.height)
-        self.setWindowTitle("LeastAction Pomodoro")
+        self.setWindowTitle("PyPomodoro")
         self.setWindowIcon(QIcon("tomato.png"))
 
         main_layout = QGridLayout()
@@ -212,6 +212,7 @@ class PomodoroTimer(QWidget):
         self.non_pomodoro_start_stop_button.setEnabled(True)
         self.state.paused = False
         self.pause_resume_button.setText(self.calculate_pause_resume_btn_text())
+        self.setWindowTitle("PyPomodoro")
 
         if self.state is self.pomodoro_state:
             # 1. Add the last task's time (rounded to nearest minute) to all tasks time,
@@ -272,6 +273,7 @@ class PomodoroTimer(QWidget):
 
         self.timer_lcd.display(self.calculate_display_time())
         self.task_minutes_lcd.display(self.calculate_last_task_time())
+        self.setWindowTitle(self.state.prefix+ " " + self.calculate_display_time())
 
     def start_countdown(self):
         if self.state.current_time >= self.state.time_limit:
