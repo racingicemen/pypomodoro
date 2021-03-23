@@ -21,7 +21,7 @@ class PomodoroState(State):
         super().__init__()
         self.time_limit = POMODORO_TIME
         self.lcd_color.setColor(QPalette.Foreground, QColor("red"))
-        self.prefix = "P"
+        self.prefix = "\u2b22"
 
 
 class ShortBreakState(State):
@@ -29,7 +29,7 @@ class ShortBreakState(State):
         super().__init__()
         self.time_limit = SHORT_BREAK_TIME
         self.lcd_color.setColor(QPalette.Foreground, QColor("yellow"))
-        self.prefix = "S"
+        self.prefix = "\u25b2"
 
 
 class LongBreakState(State):
@@ -37,4 +37,4 @@ class LongBreakState(State):
         super().__init__()
         self.time_limit = LONG_BREAK_TIME
         self.lcd_color.setColor(QPalette.Foreground, QColor("green"))
-        self.prefix = "L"
+        self.prefix = "\u25bc"
