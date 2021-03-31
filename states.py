@@ -1,10 +1,5 @@
 from PySide2.QtGui import QColor, QPalette
 
-# MINUTES = 60*1000
-# POMODORO_TIME = 30*MINUTES
-# SHORT_BREAK_TIME = 6*MINUTES
-# LONG_BREAK_TIME = 60*MINUTES
-
 
 class State:
     def __init__(self, time_limit):
