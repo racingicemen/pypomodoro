@@ -141,7 +141,7 @@ class PomodoroTimer(QWidget):
         self.non_pomodoro_stop_hhmm_lcd.display("----")
         main_layout.addLayout(non_pomodoro_layout, 10, 0, 1, 12)
 
-        main_layout.addWidget(self.config_toggle, 11, 4, 1, 1)
+        main_layout.addWidget(self.config_toggle, 11, 4, 1, 4)
 
         config_layout = QGridLayout()
         config_layout.addWidget(self.num_pomodoros_before_long_break_lcdslider, 0, 0, 1, 2)
