@@ -38,7 +38,6 @@ class LCDNumberSlider(QWidget):
 
     def setEnabled(self, enabled):
         self.slider.setEnabled(enabled)
-        self.lcd.setSegmentStyle(QLCDNumber.Flat) if not enabled else self.lcd.setSegmentStyle(QLCDNumber.Filled)
 
 
 if __name__ == '__main__':
