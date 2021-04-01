@@ -32,9 +32,9 @@ class PomodoroTimer(QWidget):
         self.task_minutes_lcd = PomodoroTimer.create_lcd(digit_count=2, lcd_color="orange")
         self.total_minutes_lcd = PomodoroTimer.create_lcd(digit_count=3, lcd_color="orange")
         self.total_pomodoros_lcd = PomodoroTimer.create_lcd(digit_count=2, lcd_color="orange")
-        self.non_pomodoro_start_hhmm_lcd = PomodoroTimer.create_lcd(digit_count=4, lcd_color="blue")
+        self.non_pomodoro_start_hhmm_lcd = PomodoroTimer.create_lcd(digit_count=6, lcd_color="blue")
         self.non_pomodoro_minutes_lcd = PomodoroTimer.create_lcd(digit_count=3, lcd_color="pink")
-        self.non_pomodoro_stop_hhmm_lcd = PomodoroTimer.create_lcd(digit_count=4, lcd_color="blue")
+        self.non_pomodoro_stop_hhmm_lcd = PomodoroTimer.create_lcd(digit_count=6, lcd_color="blue")
 
         self.start_button = PomodoroTimer.create_button("Start", self.handle_start)
         self.skip_button = PomodoroTimer.create_button("Skip", self.handle_skip)
@@ -133,12 +133,12 @@ class PomodoroTimer(QWidget):
 
         non_pomodoro_layout = QGridLayout()
         non_pomodoro_layout.addWidget(self.non_pomodoro_start_stop_button, 0, 0, 1, 1)
-        non_pomodoro_layout.addWidget(self.non_pomodoro_start_hhmm_lcd, 0, 1, 1, 2)
-        self.non_pomodoro_start_hhmm_lcd.display("----")
-        non_pomodoro_layout.addWidget(self.non_pomodoro_minutes_lcd, 0, 3, 1, 3)
+        non_pomodoro_layout.addWidget(self.non_pomodoro_start_hhmm_lcd, 0, 1, 1, 3)
+        self.non_pomodoro_start_hhmm_lcd.display("------")
+        non_pomodoro_layout.addWidget(self.non_pomodoro_minutes_lcd, 0, 4, 1, 1)
         self.non_pomodoro_minutes_lcd.display("---")
-        non_pomodoro_layout.addWidget(self.non_pomodoro_stop_hhmm_lcd, 0, 6, 1, 2)
-        self.non_pomodoro_stop_hhmm_lcd.display("----")
+        non_pomodoro_layout.addWidget(self.non_pomodoro_stop_hhmm_lcd, 0, 5, 1, 3)
+        self.non_pomodoro_stop_hhmm_lcd.display("------")
         main_layout.addLayout(non_pomodoro_layout, 11, 0, 1, 8)
 
         config_layout = QGridLayout()
@@ -179,9 +179,9 @@ class PomodoroTimer(QWidget):
                 self.start_button.setEnabled(False)
                 self.skip_button.setEnabled(False)
             self.timer.start(TICK_INTERVAL)
-            self.non_pomodoro_start_hhmm_lcd.display(PomodoroTimer.calculate_hhmm())
+            self.non_pomodoro_start_hhmm_lcd.display(PomodoroTimer.calculate_hhmmss())
             self.non_pomodoro_minutes_lcd.display(self.calculate_non_pomodoro_minutes())
-            self.non_pomodoro_stop_hhmm_lcd.display(PomodoroTimer.calculate_hhmm())
+            self.non_pomodoro_stop_hhmm_lcd.display(PomodoroTimer.calculate_hhmmss())
         else:
             if self.state.paused:
                 self.pause_resume_button.setEnabled(True)
@@ -221,8 +221,8 @@ class PomodoroTimer(QWidget):
         return "{:03d}".format(self.all_tasks_time)
 
     @staticmethod
-    def calculate_hhmm():
-        return strftime("%H%M", localtime())
+    def calculate_hhmmss():
+        return strftime("%H%M%S", localtime())
 
     def calculate_non_pomodoro_minutes(self):
         return "{:03d}".format(round(self.last_non_pomodoro_time / 60000.0))
@@ -303,7 +303,7 @@ class PomodoroTimer(QWidget):
         if self.non_pomodoro_started:
             self.last_non_pomodoro_time += TICK_INTERVAL
             self.non_pomodoro_minutes_lcd.display(self.calculate_non_pomodoro_minutes())
-            self.non_pomodoro_stop_hhmm_lcd.display(PomodoroTimer.calculate_hhmm())
+            self.non_pomodoro_stop_hhmm_lcd.display(PomodoroTimer.calculate_hhmmss())
             return
 
         if self.state.current_time >= self.state.time_limit:
