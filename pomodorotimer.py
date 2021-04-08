@@ -167,11 +167,9 @@ class PomodoroTimer(QWidget):
             old_text = self.interruptions_label.text()
             self.interruptions_label.setText(old_text + INTERRUPTION_MARKER + " ")
             self.non_pomodoro_start_button.setEnabled(True)
-            self.non_pomodoro_stop_button.setEnabled(True)
         else:
             self.timer.start()
             self.non_pomodoro_start_button.setEnabled(False)
-            self.non_pomodoro_stop_button.setEnabled(False)
 
     def handle_non_pomodoro_start_stop(self):
         self.non_pomodoro_started = not self.non_pomodoro_started
@@ -238,7 +236,6 @@ class PomodoroTimer(QWidget):
         self.stop_button.setEnabled(True)
         self.skip_button.setEnabled(False)
         self.non_pomodoro_start_button.setEnabled(False)
-        self.non_pomodoro_stop_button.setEnabled(False)
         if self.state is self.pomodoro_state:
             self.pause_resume_button.setEnabled(True)
             self.last_task_time = 0
@@ -259,7 +256,6 @@ class PomodoroTimer(QWidget):
         self.stop_button.setEnabled(False)
         self.skip_button.setEnabled(True)
         self.non_pomodoro_start_button.setEnabled(True)
-        self.non_pomodoro_stop_button.setEnabled(True)
         self.state.paused = False
         self.pause_resume_button.setText(self.calculate_pause_resume_btn_text())
         self.setWindowTitle("PyPomodoro")
