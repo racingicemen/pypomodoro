@@ -28,14 +28,14 @@ class PomodoroTimer(QWidget):
         self.width = width
         self.height = height
 
-        self.timer_lcd = PomodoroTimer.create_lcd(digit_count=5, lcd_color="red")
-        self.pomodoros_till_long_break_lcd = PomodoroTimer.create_lcd(digit_count=1, lcd_color="orange")
-        self.task_minutes_lcd = PomodoroTimer.create_lcd(digit_count=2, lcd_color="orange")
-        self.total_minutes_lcd = PomodoroTimer.create_lcd(digit_count=3, lcd_color="orange")
-        self.total_pomodoros_lcd = PomodoroTimer.create_lcd(digit_count=2, lcd_color="orange")
-        self.non_pomodoro_start_hhmm_lcd = PomodoroTimer.create_lcd(digit_count=6, lcd_color="blue")
-        self.non_pomodoro_minutes_lcd = PomodoroTimer.create_lcd(digit_count=3, lcd_color="pink")
-        self.non_pomodoro_stop_hhmm_lcd = PomodoroTimer.create_lcd(digit_count=6, lcd_color="blue")
+        self.timer_lcd = PomodoroTimer.create_lcd(digit_count=5, lcd_color="orangered")
+        self.pomodoros_till_long_break_lcd = PomodoroTimer.create_lcd(digit_count=1, lcd_color="darkcyan")
+        self.task_minutes_lcd = PomodoroTimer.create_lcd(digit_count=2, lcd_color="firebrick")
+        self.total_minutes_lcd = PomodoroTimer.create_lcd(digit_count=3, lcd_color="yellowgreen")
+        self.total_pomodoros_lcd = PomodoroTimer.create_lcd(digit_count=2, lcd_color="peru")
+        self.non_pomodoro_start_hhmm_lcd = PomodoroTimer.create_lcd(digit_count=6, lcd_color="skyblue")
+        self.non_pomodoro_minutes_lcd = PomodoroTimer.create_lcd(digit_count=3, lcd_color="tomato")
+        self.non_pomodoro_stop_hhmm_lcd = PomodoroTimer.create_lcd(digit_count=6, lcd_color="springgreen")
 
         self.start_button = PomodoroTimer.create_button("Start", self.handle_start)
         self.skip_button = PomodoroTimer.create_button("Skip", self.handle_skip)
