@@ -9,6 +9,7 @@ from states import PomodoroState, ShortBreakState, LongBreakState
 from lcdnumberslider import LCDNumberSlider
 
 TICK_INTERVAL = 500  # milliseconds
+DISPLAY_UPDATE_TICK_INTERVAL = 60000  # 1 minute, in milliseconds
 LONG_BREAK_AFTER = 6  # pomodoros
 INTERRUPTION_MARKER = "\u2b24"  # Black Large Circle
 MINUTES = 60*1000
@@ -166,22 +167,16 @@ class PomodoroTimer(QWidget):
             self.ticking_sound.stop()
             old_text = self.interruptions_label.text()
             self.interruptions_label.setText(old_text + INTERRUPTION_MARKER + " ")
-            self.non_pomodoro_start_button.setEnabled(True)
         else:
             self.timer.start()
-            self.non_pomodoro_start_button.setEnabled(False)
 
     def handle_non_pomodoro_start_stop(self):
         self.non_pomodoro_started = not self.non_pomodoro_started
         if self.non_pomodoro_started:
             self.non_pomodoro_start_button.setEnabled(False)
             self.non_pomodoro_stop_button.setEnabled(True)
-            if self.state.paused:
-                self.pause_resume_button.setEnabled(False)
-                self.stop_button.setEnabled(False)
-            else:
-                self.start_button.setEnabled(False)
-                self.skip_button.setEnabled(False)
+            self.start_button.setEnabled(False)
+            self.skip_button.setEnabled(False)
             self.timer.start(TICK_INTERVAL)
             self.non_pomodoro_start_hhmm_lcd.display(PomodoroTimer.calculate_hhmmss())
             self.non_pomodoro_minutes_lcd.display(self.calculate_non_pomodoro_minutes())
@@ -190,15 +185,10 @@ class PomodoroTimer(QWidget):
             self.ticking_sound.stop()
             self.non_pomodoro_start_button.setEnabled(True)
             self.non_pomodoro_stop_button.setEnabled(False)
-            if self.state.paused:
-                self.pause_resume_button.setEnabled(True)
-                self.stop_button.setEnabled(True)
-            else:
-                self.start_button.setEnabled(True)
-                self.skip_button.setEnabled(True)
+            self.start_button.setEnabled(True)
+            self.skip_button.setEnabled(True)
             self.timer.stop()
-            self.all_tasks_time += round(self.last_non_pomodoro_time / 60000.0)
-            self.total_minutes_lcd.display(self.calculate_all_tasks_time())
+            self.all_tasks_time = 60000 * round(self.all_tasks_time / 60000.0)
             self.last_non_pomodoro_time = 0
 
     def calculate_pause_resume_btn_text(self):
@@ -222,7 +212,7 @@ class PomodoroTimer(QWidget):
         return "{:02d}".format(round(self.last_task_time / 60000.0))
 
     def calculate_all_tasks_time(self):
-        return "{:03d}".format(self.all_tasks_time)
+        return "{:03d}".format(round(self.all_tasks_time / 60000.0))
 
     @staticmethod
     def calculate_hhmmss():
@@ -262,9 +252,8 @@ class PomodoroTimer(QWidget):
         self.setWindowTitle("PyPomodoro")
 
         if self.state is self.pomodoro_state:
-            # 1. Add the last task's time (rounded to nearest minute) to all tasks time,
-            self.all_tasks_time += round(self.last_task_time / 60000.0)
-            self.total_minutes_lcd.display(self.calculate_all_tasks_time())
+            # 1. Set all_tasks_time rounded to the nearest minute, in milliseconds
+            self.all_tasks_time = 60000*round(self.all_tasks_time / 60000.0)
             # 2. decrement the pomodoros_till_long_break counter and update the lcd
             self.pomodoros_till_long_break -= 1
             self.pomodoros_till_long_break_lcd.display(self.calculate_pomodoros_till_long_break())
@@ -306,7 +295,9 @@ class PomodoroTimer(QWidget):
     def timer_fired(self):
         if self.non_pomodoro_started:
             self.last_non_pomodoro_time += TICK_INTERVAL
+            self.all_tasks_time += TICK_INTERVAL
             self.non_pomodoro_minutes_lcd.display(self.calculate_non_pomodoro_minutes())
+            self.total_minutes_lcd.display(self.calculate_all_tasks_time())
             self.non_pomodoro_stop_hhmm_lcd.display(PomodoroTimer.calculate_hhmmss())
             self.ticking_sound.stop()
             self.ticking_sound.play()
@@ -329,10 +320,12 @@ class PomodoroTimer(QWidget):
 
         if self.state is self.pomodoro_state:
             self.last_task_time += TICK_INTERVAL
+            self.all_tasks_time += TICK_INTERVAL
 
         self.timer_lcd.display(self.calculate_display_time())
         self.task_minutes_lcd.display(self.calculate_last_task_time())
-        self.setWindowTitle(self.state.prefix+ " " + self.calculate_display_time())
+        self.total_minutes_lcd.display(self.calculate_all_tasks_time())
+        self.setWindowTitle(self.state.prefix + " " + self.calculate_display_time())
 
     def start_countdown(self):
         if self.state.current_time >= self.state.time_limit:
