@@ -139,7 +139,7 @@ class PomodoroTimer(QWidget):
         non_pomodoro_layout.addWidget(self.non_pomodoro_start_button, 0, 0, 1, 1)
         non_pomodoro_layout.addWidget(self.non_pomodoro_start_hhmm_lcd, 0, 1, 1, 2)
         self.non_pomodoro_start_hhmm_lcd.display("------")
-        non_pomodoro_layout.addWidget(self.non_pomodoro_minutes_lcd, 0, 3, 1, 2)
+        non_pomodoro_layout.addWidget(self.non_pomodoro_minutes_lcd, 0, 3, 1, 1)
         self.non_pomodoro_minutes_lcd.display("---")
         non_pomodoro_layout.addWidget(self.non_pomodoro_stop_hhmm_lcd, 0, 5, 1, 2)
         non_pomodoro_layout.addWidget(self.non_pomodoro_stop_button, 0, 7, 1, 1)
