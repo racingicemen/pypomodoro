@@ -11,7 +11,7 @@ from datetime import datetime
 TICK_INTERVAL = 500  # milliseconds
 DISPLAY_UPDATE_TICK_INTERVAL = 60000  # 1 minute, in milliseconds
 LONG_BREAK_AFTER = 6  # pomodoros
-INTERRUPTION_MARKER = "\u2b24"  # Black Large Circle
+INTERRUPTION_MARKER = "\u25c9"  # Fisheye
 MINUTES = 60*1000
 POMODORO_MINUTES = 30
 POMODORO_TIME = POMODORO_MINUTES*MINUTES
@@ -51,7 +51,7 @@ class PomodoroTimer(QWidget):
         self.non_pomodoro_stop_button = PomodoroTimer.create_button("Stop", self.handle_non_pomodoro_start_stop, enabled=False)
 
         self.interruptions_label = QLabel()
-        self.interruptions_label.setFont(QFont("PT Mono", 24))
+        self.interruptions_label.setFont(QFont("MesloLGS Nerd Font Mono", 42))
         self.interruptions_label.setStyleSheet("border: 3px solid black;")
 
         self.last_task_time = 0
