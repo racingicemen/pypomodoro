@@ -36,8 +36,8 @@ class PomodoroTimer(QWidget):
         self.task_minutes_lcd = PomodoroTimer.create_lcd(digit_count=2, lcd_color="firebrick")
         self.total_minutes_lcd = PomodoroTimer.create_lcd(digit_count=3, lcd_color="yellowgreen")
         self.total_pomodoros_lcd = PomodoroTimer.create_lcd(digit_count=2, lcd_color="peru")
-        self.total_pomodoro_minutes_lcd = PomodoroTimer.create_lcd(digit_count=3, lcd_color="crimson")
-        self.total_non_pomodoro_minutes_lcd = PomodoroTimer.create_lcd(digit_count=3, lcd_color="salmon")
+        self.total_pomodoro_minutes_lcd = PomodoroTimer.create_lcd(digit_count=3, lcd_color="dodgerblue")
+        self.total_non_pomodoro_minutes_lcd = PomodoroTimer.create_lcd(digit_count=3, lcd_color="blueviolet")
 
         self.non_pomodoro_start_hhmm_lcd = PomodoroTimer.create_lcd(digit_count=6, lcd_color="skyblue")
         self.non_pomodoro_minutes_lcd = PomodoroTimer.create_lcd(digit_count=3, lcd_color="tomato")
