@@ -100,7 +100,7 @@ class PomodoroTimer(QWidget):
 
     def setup_ui(self):
         self.setFixedSize(self.width, self.height)
-        self.setWindowTitle("PyPomodoro")
+        self.setWindowTitle(self.today)
         self.setWindowIcon(QIcon("tomato.png"))
 
         main_layout = QGridLayout()
@@ -257,7 +257,7 @@ class PomodoroTimer(QWidget):
         self.non_pomodoro_start_button.setEnabled(True)
         self.state.paused = False
         self.pause_resume_button.setText(self.calculate_pause_resume_btn_text())
-        self.setWindowTitle("PyPomodoro")
+        self.setWindowTitle(self.today)
 
         if self.state is self.pomodoro_state:
             # 1. Set all_tasks_time rounded to the nearest minute, in milliseconds

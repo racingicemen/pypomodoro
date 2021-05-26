@@ -15,7 +15,7 @@ class State:
 class PomodoroState(State):
     def __init__(self, time_limit):
         super().__init__(time_limit)
-        self.lcd_color.setColor(QPalette.Foreground, QColor("red"))
+        self.lcd_color.setColor(QPalette.Foreground, QColor("orangered"))
         self.prefix = "\u2b22"
 
 
