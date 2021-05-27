@@ -32,7 +32,7 @@ class PomodoroTimer(QWidget):
         self.today = datetime.now().strftime("%d%b%Y%a")
 
         self.timer_lcd = PomodoroTimer.create_lcd(digit_count=5, lcd_color="orangered")
-        self.pomodoros_till_long_break_lcd = PomodoroTimer.create_lcd(digit_count=1, lcd_color="darkcyan")
+        self.pomodoros_till_long_break_lcd = PomodoroTimer.create_lcd(digit_count=1, lcd_color="slategray")
         self.task_minutes_lcd = PomodoroTimer.create_lcd(digit_count=2, lcd_color="firebrick")
         self.total_minutes_lcd = PomodoroTimer.create_lcd(digit_count=3, lcd_color="yellowgreen")
         self.total_pomodoros_lcd = PomodoroTimer.create_lcd(digit_count=2, lcd_color="peru")
