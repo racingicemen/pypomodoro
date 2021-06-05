@@ -5,6 +5,8 @@ class State:
     def __init__(self, time_limit):
         self.started = False
         self.paused = False
+        self.non_pomodoro_started = False
+        self.non_pomodoro_paused = False
         self.current_time = 0
         self.time_limit = time_limit
         self.show_blink = True

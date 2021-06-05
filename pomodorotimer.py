@@ -47,8 +47,8 @@ class PomodoroTimer(QWidget):
         self.skip_button = PomodoroTimer.create_button("Skip", self.handle_skip)
         self.pause_resume_button = PomodoroTimer.create_button("Pause", self.handle_pause_resume, enabled=False)
         self.stop_button = PomodoroTimer.create_button("Stop", self.handle_stop, enabled=False)
-        self.non_pomodoro_start_button = PomodoroTimer.create_button("Start", self.handle_non_pomodoro_start_stop)
-        self.non_pomodoro_stop_button = PomodoroTimer.create_button("Stop", self.handle_non_pomodoro_start_stop, enabled=False)
+        self.non_pomodoro_start_button = PomodoroTimer.create_button("Start", self.handle_non_pomodoro_start)
+        self.non_pomodoro_stop_button = PomodoroTimer.create_button("Stop", self.handle_non_pomodoro_stop, enabled=False)
 
         self.interruptions_label = QLabel()
         self.interruptions_label.setFont(QFont("MesloLGS Nerd Font Mono", 42))
@@ -65,7 +65,6 @@ class PomodoroTimer(QWidget):
         self.state = self.pomodoro_state
 
         self.last_non_pomodoro_time = 0
-        self.non_pomodoro_started = False
 
         self.ticking_sound = PomodoroTimer.initialize_sound_files('ticking-sound.wav')
         self.beeping_sound = PomodoroTimer.initialize_sound_files('beeping-sound.wav')
@@ -171,34 +170,35 @@ class PomodoroTimer(QWidget):
             self.timer.start()
             self.non_pomodoro_start_button.setEnabled(False)
 
-    def handle_non_pomodoro_start_stop(self):
-        self.non_pomodoro_started = not self.non_pomodoro_started
-        if self.non_pomodoro_started:
-            self.non_pomodoro_start_button.setEnabled(False)
-            self.non_pomodoro_stop_button.setEnabled(True)
-            if self.state.paused:
-                self.pause_resume_button.setEnabled(False)
-                self.stop_button.setEnabled(False)
-            else:
-                self.start_button.setEnabled(False)
-                self.skip_button.setEnabled(False)
-            self.timer.start(TICK_INTERVAL)
-            self.non_pomodoro_start_hhmm_lcd.display(PomodoroTimer.calculate_hhmmss())
-            self.non_pomodoro_minutes_lcd.display(self.calculate_non_pomodoro_minutes())
-            self.non_pomodoro_stop_hhmm_lcd.display(PomodoroTimer.calculate_hhmmss())
+    def handle_non_pomodoro_start(self):
+        self.state.non_pomodoro_started = True
+        self.non_pomodoro_start_button.setEnabled(False)
+        self.non_pomodoro_stop_button.setEnabled(True)
+        if self.state.paused:
+            self.pause_resume_button.setEnabled(False)
+            self.stop_button.setEnabled(False)
         else:
-            self.ticking_sound.stop()
-            self.non_pomodoro_start_button.setEnabled(True)
-            self.non_pomodoro_stop_button.setEnabled(False)
-            if self.state.paused:
-                self.pause_resume_button.setEnabled(True)
-                self.stop_button.setEnabled(True)
-            else:
-                self.start_button.setEnabled(True)
-                self.skip_button.setEnabled(True)
-            self.timer.stop()
-            self.all_non_pomodoro_time = 60000 * round(self.all_non_pomodoro_time / 60000.0)
-            self.last_non_pomodoro_time = 0
+            self.start_button.setEnabled(False)
+            self.skip_button.setEnabled(False)
+        self.timer.start(TICK_INTERVAL)
+        self.non_pomodoro_start_hhmm_lcd.display(PomodoroTimer.calculate_hhmmss())
+        self.non_pomodoro_minutes_lcd.display(self.calculate_non_pomodoro_minutes())
+        self.non_pomodoro_stop_hhmm_lcd.display(PomodoroTimer.calculate_hhmmss())
+
+    def handle_non_pomodoro_stop(self):
+        self.state.non_pomodoro_started = False
+        self.ticking_sound.stop()
+        self.non_pomodoro_start_button.setEnabled(True)
+        self.non_pomodoro_stop_button.setEnabled(False)
+        if self.state.paused:
+            self.pause_resume_button.setEnabled(True)
+            self.stop_button.setEnabled(True)
+        else:
+            self.start_button.setEnabled(True)
+            self.skip_button.setEnabled(True)
+        self.timer.stop()
+        self.all_non_pomodoro_time = 60000 * round(self.all_non_pomodoro_time / 60000.0)
+        self.last_non_pomodoro_time = 0
 
     def calculate_pause_resume_btn_text(self):
         return "Resume" if self.state.paused else "Pause"
@@ -301,7 +301,7 @@ class PomodoroTimer(QWidget):
         self.long_break_state.time_limit = self.long_break_time_lcdslider.get_current_value()*MINUTES
 
     def timer_fired(self):
-        if self.non_pomodoro_started:
+        if self.state.non_pomodoro_started:
             self.last_non_pomodoro_time += TICK_INTERVAL
             self.all_non_pomodoro_time += TICK_INTERVAL
             self.non_pomodoro_minutes_lcd.display(self.calculate_non_pomodoro_minutes())
