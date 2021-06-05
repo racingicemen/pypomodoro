@@ -315,6 +315,7 @@ class PomodoroTimer(QWidget):
         if self.state.current_time >= self.state.time_limit:
             self.state.show_blink = not self.state.show_blink
             self.ticking_sound.stop()
+            self.pause_resume_button.setEnabled(False)
             if self.state is self.pomodoro_state:
                 self.time_exceeded_sound.stop()
                 self.time_exceeded_sound.play()
