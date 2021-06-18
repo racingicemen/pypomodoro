@@ -26,10 +26,3 @@ class ShortBreakState(State):
         super().__init__(time_limit)
         self.lcd_color.setColor(QPalette.Foreground, QColor("yellow"))
         self.prefix = "\u25b2"
-
-
-class LongBreakState(State):
-    def __init__(self, time_limit):
-        super().__init__(time_limit)
-        self.lcd_color.setColor(QPalette.Foreground, QColor("green"))
-        self.prefix = "\u25bc"
