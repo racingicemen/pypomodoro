@@ -179,7 +179,6 @@ class PomodoroTimer(QWidget):
 
     def handle_non_pomodoro_stop(self):
         self.state.non_pomodoro_started = False
-        self.ticking_sound.stop()
         self.non_pomodoro_start_button.setEnabled(True)
         self.non_pomodoro_stop_button.setEnabled(False)
         if self.state.paused:
@@ -283,8 +282,6 @@ class PomodoroTimer(QWidget):
             self.total_minutes_lcd.display(self.calculate_all_tasks_time())
             self.total_non_pomodoro_minutes_lcd.display(self.calculate_non_pomodoro_tasks_time())
             self.non_pomodoro_stop_hhmm_lcd.display(PomodoroTimer.calculate_hhmmss())
-            self.ticking_sound.stop()
-            self.ticking_sound.play()
             return
 
         if self.state.current_time >= self.state.time_limit:
